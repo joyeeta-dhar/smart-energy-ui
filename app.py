@@ -9,6 +9,12 @@ st.write("Send data to ThingSpeak")
 field1 = st.number_input("Enter Voltage Value", min_value=0, max_value=500, value=50)
 field2 = st.number_input("Enter Current Value", min_value=0, max_value=500, value=30)
 
+# Overload Detection Logic
+if field2 > 10:   # assuming field2 = current
+    st.error("⚠️ Overload Detected!")
+else:
+    st.success("✅ Normal Load")
+    
 # Your API Key
 API_KEY = "OO5TX7X8H9UUC0LJ"
 
