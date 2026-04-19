@@ -6,8 +6,8 @@ st.title("Smart Energy Meter Dashboard")
 st.write("Send data to ThingSpeak")
 
 # Input UI
-field1 = st.number_input("Enter Power Value", min_value=0, max_value=500, value=50)
-field2 = st.number_input("Enter Voltage Value", min_value=0, max_value=500, value=30)
+field1 = st.number_input("Enter Voltage Value", min_value=0, max_value=500, value=50)
+field2 = st.number_input("Enter Current Value", min_value=0, max_value=500, value=30)
 
 # Your API Key
 API_KEY = "OO5TX7X8H9UUC0LJ"
