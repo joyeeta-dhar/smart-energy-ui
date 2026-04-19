@@ -50,6 +50,11 @@ if st.button("Send Data to ThingSpeak"):
 
     response = requests.get(url, params=params)
 
+    st.write("Response Code:", response.status_code)
+    st.write("Response Text:", response.text)
+
+    response = requests.get(url, params=params)
+
     if response.status_code == 200:
         st.success("✅ Data Sent to ThingSpeak")
     else:
