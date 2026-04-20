@@ -14,7 +14,7 @@ else:
     st.success("✅ Normal Load")
 
 # API Key
-API_KEY = "YOUR_API_KEY"
+API_KEY = "OO5TX7X8H9UUC0LJ"
 
 # Send button
 if st.button("Send Data"):
