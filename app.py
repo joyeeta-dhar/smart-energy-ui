@@ -6,7 +6,7 @@ st.title("Smart Energy Meter Dashboard")
 # Inputs
 voltage = st.number_input("Voltage (V)", value=230)
 current = st.number_input("Current (A)", value=5)
-
+power = voltage * current
 # ---- ADD LOGIC HERE ----
 if current > 10:
     st.error("⚠️ Overload Detected!")
