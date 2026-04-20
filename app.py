@@ -23,7 +23,8 @@ if st.button("Send Data"):
     params = {
         "api_key": API_KEY,
         "field1": voltage,
-        "field2": current
+        "field2": current,
+        "field3": power,
     }
 
     requests.get(url, params=params)
