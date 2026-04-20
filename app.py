@@ -1,53 +1,65 @@
 import streamlit as st
 import requests
 
-st.title("Smart Energy Meter Dashboard")
+st.title("🚀 Smart Energy Meter: Predictive Maintenance Mode")
 
 # 1. Inputs
 voltage = st.number_input("Voltage (V)", value=230)
-current = st.number_input("Current (A)", value=5, step=1)
+current = st.number_input("Current (A)", value=0.0, step=0.1)
 power = voltage * current
 
-# 2. NILM Simulation Logic (Defining Signatures)
-# In a real NILM system, these would be in a database
-AC_SIGNATURE = 8.0  # AC usually pulls 8A
-FRIDGE_SIGNATURE = 2.0 
-HEATER_SIGNATURE = 12.0
+# 2. Signature Database (Simulating NILM Library)
+# We define ranges because real appliances vary slightly
+signatures = {
+    "LED Bulb": (0.1, 0.5),
+    "Laptop/TV": (0.6, 2.0),
+    "Refrigerator": (2.1, 4.0),
+    "Microwave/Toaster": (5.0, 9.0),
+    "Air Conditioner (AC)": (9.1, 13.0),
+    "Electric Water Heater": (13.1, 18.0)
+}
 
-# 3. Enhanced Logic for Overload & Identification
-overload_status = 0 # 0 for Normal, 1 for Overload
+# 3. Logic for Identification & Overload
+overload_status = 0
+identified_appliance = "None/Standby"
 
-if current > 12:
+# Find which appliance matches the current
+for name, (low, high) in signatures.items():
+    if low <= current <= high:
+        identified_appliance = name
+        break
+if current > 18.0:
+    identified_appliance = "UNKNOWN HIGH LOAD"
+
+st.subheader(f"Detected Appliance: {identified_appliance}")
+
+# 4. Predictive Maintenance & Overload Alerts
+if current > 12.0:
     overload_status = 1
-    st.error("⚠️ OVERLOAD DETECTED!")
+    st.error(f"⚠️ OVERLOAD! Current ({current}A) exceeds 12A Safety Limit.")
     
-    # Simple NILM Logic: Guessing the culprit based on current levels
-    if current >= 15:
-        st.warning("Prediction: Heavy Load (Heater/Industrial Motor) detected. Check for insulation wear.")
-    elif current >= 10:
-        st.warning("Prediction: AC Unit is drawing abnormal current. Maintenance required.")
+    if identified_appliance == "Air Conditioner (AC)":
+        st.warning("PREDICTIVE ALERT: AC is drawing max current. Check compressor health or clean filters.")
+    elif identified_appliance == "Electric Water Heater":
+        st.warning("CRITICAL ALERT: High Power heating detected. Ensure wiring is rated for this load.")
 else:
-    st.success("✅ Normal Load")
-    st.info(f"System Health: Stable. Total Power: {power}W")
+    st.success("✅ System Operating Within Safe Limits")
 
-# 4. API Key & Data Sending
+# 5. Send Data to ThingSpeak
 API_KEY = "OO5TX7X8H9UUC0LJ"
 
-if st.button("Send Data"):
+if st.button("Update Cloud Data"):
     url = "https://api.thingspeak.com/update"
-    
-    # We add Field 5 for the Overload Status (the 0 or 1 you saw in your chart)
     params = {
         "api_key": API_KEY,
         "field1": voltage,
         "field2": current,
         "field3": power,
-        "field5": overload_status # This populates the red dots in your chart!
+        "field5": overload_status
     }
-
+    
     try:
-        response = requests.get(url, params=params)
-        if response.status_code == 200:
-            st.success("Data Sent to ThingSpeak Successfully!")
+        requests.get(url, params=params)
+        st.info(f"Cloud Sync: {identified_appliance} data pushed to Field 2 & 5.")
     except:
-        st.error("Failed to connect to ThingSpeak.")
+        st.error("Connection Error")
